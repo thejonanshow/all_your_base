@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:stretch
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates git vim zsh openssl curl
 RUN git clone https://github.com/thejonanshow/dotfiles.git && cd dotfiles && /bin/bash ./install.sh
