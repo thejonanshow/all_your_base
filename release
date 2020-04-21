@@ -1,6 +1,15 @@
 #!/bin/bash
 image_name=${PWD##*/}
-tag=$(git describe)
+tag=$(git describe --abbrev=0)
+
+echo "Release thejonanshow/$image_name:$tag to Docker Hub? (y/N)"
+
+while [[ ! $answer =~ [ynN] ]]
+do
+  printf '> '
+  read answer
+done
+[[ $answer =~ [nN] ]] && exit
 
 if [[ ! "$(git update-index --refresh; git diff-index --quiet HEAD --)" == "" ]]; then
   echo "Uncommitted local changes."
@@ -12,8 +21,8 @@ if [[ "$(git ls-remote -q origin refs/tags/$tag)" =~ "$tag" ]]; then
   exit
 fi
 
-docker build --no-cache --tag thejonanshow/$image_name:$tag .
-container=$(docker run -d thejonanshow/$image_name:$tag /bin/true)
-docker export $container | docker import - thejonanshow/$image_name:$tag
+docker build --no-cache --tag "thejonanshow/$image_name:$tag" .
+container=$(docker run -d "thejonanshow/$image_name:$tag" /bin/true)
+docker export $container | docker import - "thejonanshow/$image_name:$tag"
 docker container rm $container
-docker push thejonanshow/$image_name:$tag
+docker push "thejonanshow/$image_name:$tag"
